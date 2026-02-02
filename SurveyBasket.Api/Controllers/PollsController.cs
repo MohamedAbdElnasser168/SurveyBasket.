@@ -1,4 +1,8 @@
 ﻿
+using Mapster;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SurveyBasket.Api.Mapping;
+
 namespace SurveyBasket.Api.Controllers
 
 {
@@ -15,8 +19,12 @@ namespace SurveyBasket.Api.Controllers
         [HttpGet("GetAll")]
         public IActionResult GetAll()
         {
-            return Ok(_pollService.GetAll());
+            var polls = _pollService.GetAll();
+            var response = polls.Adapt<List<PollResponse>>();
+            return Ok(response);
         }
+
+
 
         // mapped id from route to method parameter
 
@@ -24,21 +32,55 @@ namespace SurveyBasket.Api.Controllers
         public IActionResult Get(int id)
         {
             var poll = _pollService.GetPollById(id);
-            return poll is null ? NotFound() : Ok(poll);
+            if (poll == null)
+            {
+                return NotFound();
+            }
+
+            //var config = new TypeAdapterConfig();
+            //config.NewConfig<Poll, PollResponse>()
+            //.Map(dest => dest.Description, src => src.Description);
+
+
+            var response = poll.Adapt<PollResponse>();
+
+            return Ok(response);
+
+
         }
 
+        
+        
+        
+
         [HttpPost("")]
-        public IActionResult Add(Poll request)
+        public IActionResult Add([FromBody]CreatePollRequest request, [FromServices]IValidator<CreatePollRequest> validator)
         {
-            var newPoll = _pollService.Add(request);
-            return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll);
+            #region Code Before Using Fluent Validation Sharp Package
+            //var validationResult = validator.Validate(request);
+
+            //if (!validationResult.IsValid)// لو في ايرورز يعني
+            //{
+            //    var modelState = new ModelStateDictionary();
+            //    validationResult.Errors.ForEach(x => modelState.AddModelError(x.PropertyName,x.ErrorMessage));
+
+            //    return ValidationProblem(modelState);
+            //}
+            #endregion
+
+            //  request is valid
+            var newPoll = _pollService.Add(request.Adapt<Poll>());
+            return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll.Adapt<PollResponse>());
+        
         }
+
+
 
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute]int id, [FromBody]Poll request)
+        public IActionResult Update([FromRoute]int id, [FromBody]CreatePollRequest request)
         {
-            var isUpdated= _pollService.Update(id, request);
+            var isUpdated= _pollService.Update(id, request.Adapt<Poll>());
             
             if (!isUpdated)
             {

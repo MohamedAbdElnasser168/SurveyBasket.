@@ -73,12 +73,14 @@ namespace SurveyBasket.Api.Authentication
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 return jwtToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
+
             }
             catch 
             {
                 // Token validation failed
                 return null;
             }
+
         }
     }
 }

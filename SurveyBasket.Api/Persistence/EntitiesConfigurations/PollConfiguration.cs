@@ -9,6 +9,11 @@ namespace SurveyBasket.Api.Persistence.EntitiesConfigurations
             builder.HasIndex(p=>p.Title).IsUnique();
             builder.Property(p => p.Title).HasMaxLength(100);
             builder.Property(p => p.Summary).HasMaxLength(1500);
+
+            // builder.Property(p => p.CreatedOn ).HasDefaultValue(DateTime.UtcNow);
+            // في حالة استخدام GETDATE() فان التاريخ بيكون بتوقيت السيرفر اللي بيشغل قاعدة البيانات
+            //builder.Property(p => p.CreatedOn).HasDefaultValueSql("GETDATE()");
+
         }
     }
 }

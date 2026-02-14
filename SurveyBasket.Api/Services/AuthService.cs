@@ -47,7 +47,10 @@ namespace SurveyBasket.Api.Services
             return new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName,token,expiresIn,refreshToken,refreshTokenExpiration);
         }
 
-        // generate new jwt token and refresh token using refresh token
+
+
+
+        // generate new jwt token and refresh token using refresh token and revoke the old refresh token 
         public async Task<AuthResponse?> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
         {
             // Validate the refresh token and get the user associated with it
@@ -104,6 +107,8 @@ namespace SurveyBasket.Api.Services
         }
 
 
+
+        // Revoke the refresh token and return true if successful, otherwise return false
         public async Task<bool> RevokeRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
         {
 

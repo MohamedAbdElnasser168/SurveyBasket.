@@ -9,7 +9,12 @@
         string Summary,
         bool IsPublished,
         DateOnly StartsAt,
-        DateOnly EndsAt
+        DateOnly EndsAt,
+        string CreatedById,
+        DateTime CreatedOn,
+        string? UpdatedById,
+        DateTime? UpdatedOn
+
 
     );
 }

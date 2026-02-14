@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Api.Entities
 {
-    public sealed class Poll
+    public sealed class Poll: AuditableEntity
     {
         // We Will Use Fluent Api To Validate all Entity
 
@@ -10,5 +10,7 @@
         public bool IsPublished { get; set; }
         public DateOnly StartsAt { get; set; }
         public DateOnly EndsAt { get; set; }
+
+       
     }   
 }

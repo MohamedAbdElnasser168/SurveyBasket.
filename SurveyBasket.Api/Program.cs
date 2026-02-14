@@ -1,11 +1,20 @@
 
 
 
+using Microsoft.Extensions.Configuration;
+using SurveyBasket.Api.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDependencies();
+
+builder.Services.AddDependencies(builder.Configuration);
+// Identity API Endpoints registration
+//builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 var app = builder.Build();
 
+#region Pipeline
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -17,6 +26,10 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+//app.MapIdentityApi<ApplicationUser>();
+
 app.MapControllers();
 
 app.Run();
+
+#endregion

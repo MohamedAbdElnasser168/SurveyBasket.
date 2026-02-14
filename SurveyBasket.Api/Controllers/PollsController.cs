@@ -1,13 +1,17 @@
 ﻿
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SurveyBasket.Api.Contracts.Polls;
 using SurveyBasket.Api.Mapping;
+using System.Threading.Tasks;
 
 namespace SurveyBasket.Api.Controllers
 
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class PollsController(IPollService pollService) : ControllerBase
     {
 
@@ -16,45 +20,42 @@ namespace SurveyBasket.Api.Controllers
 
 
 
+        // Get All Polls
+        [Authorize]
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
-            var polls = _pollService.GetAll();
+            var polls = await _pollService.GetAllAsync(cancellationToken);
             var response = polls.Adapt<List<PollResponse>>();
             return Ok(response);
         }
 
 
 
-        // mapped id from route to method parameter
+        //mapped id from route to method parameter
 
+        // Get Poll By Id
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken = default)
         {
-            var poll = _pollService.GetPollById(id);
+            var poll = await _pollService.GetPollByIdAsync(id, cancellationToken);
             if (poll == null)
             {
                 return NotFound();
             }
 
-            //var config = new TypeAdapterConfig();
-            //config.NewConfig<Poll, PollResponse>()
-            //.Map(dest => dest.Description, src => src.Description);
-
-
             var response = poll.Adapt<PollResponse>();
-
             return Ok(response);
-
-
         }
 
-        
-        
-        
 
+
+
+        /// ADD New Poll
+        /// 
         [HttpPost("")]
-        public IActionResult Add([FromBody]CreatePollRequest request, [FromServices]IValidator<CreatePollRequest> validator)
+        public async Task<IActionResult> Add([FromBody] PollRequest request,
+            CancellationToken cancellationToken = default)
         {
             #region Code Before Using Fluent Validation Sharp Package
             //var validationResult = validator.Validate(request);
@@ -69,41 +70,49 @@ namespace SurveyBasket.Api.Controllers
             #endregion
 
             //  request is valid
-            var newPoll = _pollService.Add(request.Adapt<Poll>());
+            var newPoll = await _pollService.AddAsync(request.Adapt<Poll>(), cancellationToken);
             return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll.Adapt<PollResponse>());
-        
+
         }
 
 
 
+        // Update Poll
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute]int id, [FromBody]CreatePollRequest request)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PollRequest request, CancellationToken cancellationToken = default)
         {
-            var isUpdated= _pollService.Update(id, request.Adapt<Poll>());
-            
+            var isUpdated = await _pollService.UpdateAsync(id, request.Adapt<Poll>(), cancellationToken);
+
             if (!isUpdated)
             {
                 return NotFound();
             }
-
             return NoContent();
 
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute]int id)
+        public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken = default)
         {
-            var IsDeleted = _pollService.Delete(id);
+            var IsDeleted = await _pollService.DeleteAsync(id, cancellationToken);
 
             if (!IsDeleted)
             {
                 return NotFound();
             }
 
-
             return NoContent();
         }
 
+
+
+        [HttpPut("{id}/togglePublish")]
+        public async Task<IActionResult> TogglePublish(int id,CancellationToken cancellationToken =default)
+        { 
+            var isUpdated= await _pollService.TogglePublishStatusAsync(id,cancellationToken);
+            return isUpdated ? NoContent() : NotFound();
+        }
+
     }
-}
+    }

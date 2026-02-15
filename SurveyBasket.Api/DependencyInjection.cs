@@ -8,22 +8,56 @@ namespace SurveyBasket.Api
     {
         public static IServiceCollection AddDependencies(this IServiceCollection services,IConfiguration configuration)
         {
+            services.AddControllers();
 
-            //
+            // Read allowed origins from configuration
+            //var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+            // CORS configuration
+
+            services.AddCors(options =>
+                options.AddDefaultPolicy(builder =>
+                    builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                )
+                );
+
+
+
+
+
+            //services.AddCors(options =>
+            ////{
+            ////    options.AddPolicy("AllowAll", builder =>
+            ////        builder
+            ////        .AllowAnyOrigin()
+            ////        .AllowAnyMethod()       
+            ////        .AllowAnyHeader()
+            ////    );
+            //    //options.AddPolicy("CustomPolicy", builder =>
+            //    //    builder
+            //    //    .WithOrigins()
+            //    //    .AllowAnyMethod()
+            //    //    .AllowAnyHeader()
+            //    //);
+
+            //});
+
+
+
             var connectionString = configuration.GetConnectionString("DefaultConnection") ??
             throw new InvalidOperationException(" Connection String 'DefaultConnection' Not Found");
+
 
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
 
 
-
-
-
             services.AddAuthConfig(configuration);
             services.AddServicesToContainer();
             services.AddMappsterConf();
-            services.AddControllers();
             services.AddOpenApi();
             services.AddFluentValidation();
 
@@ -58,8 +92,6 @@ namespace SurveyBasket.Api
 
             return services;
         }
-
-
 
         public static IServiceCollection AddAuthConfig(this IServiceCollection services,IConfiguration configuration)
         {

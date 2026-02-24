@@ -23,11 +23,12 @@ namespace SurveyBasket.Api
                     .AllowAnyHeader()
                 )
                 );
+             
 
 
 
 
-
+            #region CommentAboutCors
             //services.AddCors(options =>
             ////{
             ////    options.AddPolicy("AllowAll", builder =>
@@ -45,6 +46,7 @@ namespace SurveyBasket.Api
 
             //});
 
+            #endregion
 
 
             var connectionString = configuration.GetConnectionString("DefaultConnection") ??
@@ -70,7 +72,12 @@ namespace SurveyBasket.Api
             // Add services to the container.
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
-           
+
+
+            // Add global exception handler
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddProblemDetails();
+
 
             return services;
         }

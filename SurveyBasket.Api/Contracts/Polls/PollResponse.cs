@@ -2,9 +2,10 @@
 {
     public record PollResponse
     (
-        // data annotations can be used for validation
+         // data annotations can be used for validation
 
-        //[Required(ErrorMessage ="Required field!")]
+         //[Required(ErrorMessage ="Required field!")]
+        int Id,
         string? Title,
         string Summary,
         bool IsPublished,

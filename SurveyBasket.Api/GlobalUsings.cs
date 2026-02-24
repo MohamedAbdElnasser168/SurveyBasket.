@@ -20,3 +20,5 @@ global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.AspNetCore.Identity;
 global using SurveyBasket.Api.Authentication;
 global using SurveyBasket.Api.Persistence;
+global using SurveyBasket.Api.Abstractions;
+global using SurveyBasket.Api.Errors;

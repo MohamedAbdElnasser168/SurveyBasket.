@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
+using SurveyBasket.Api.Abstractions;
+using SurveyBasket.Api.Errors;
 using System.Security.Cryptography;
 
 namespace SurveyBasket.Api.Services
@@ -12,19 +14,20 @@ namespace SurveyBasket.Api.Services
 
         private readonly int _refreshTokenExpireDays = 14; 
 
-        public async Task<AuthResponse?> GetTokenAsync(string email, string password, CancellationToken cancellationToken = default)
+        public async Task<Result<AuthResponse>> GetTokenAsync(string email, string password, CancellationToken cancellationToken = default)
         {
             // check If i have user in db with given email  (Using UserManger(Best) Or ApplicationUser)
             var user = await _userManager.FindByEmailAsync(email);
             if (user is null)
             {
-                return null;
+                //return null;
+                return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials);
             }
             // check If password is correct
             var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
             if (!isValidPassword)
             {
-                return null;
+                return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials);
             }
             // generate jwt token if password is correct (Using JwtSecurityTokenHandler Or Using JwtSecurityToken)
             var (token, expiresIn) = _jwtProvider.GenerateToken(user);
@@ -44,20 +47,22 @@ namespace SurveyBasket.Api.Services
 
             await _userManager.UpdateAsync(user);
 
-            return new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName,token,expiresIn,refreshToken,refreshTokenExpiration);
+            //return new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName,token,expiresIn,refreshToken,refreshTokenExpiration);
+            var response = new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName, token, expiresIn, refreshToken, refreshTokenExpiration);
+            return Result.Success(response);
         }
 
 
 
 
         // generate new jwt token and refresh token using refresh token and revoke the old refresh token 
-        public async Task<AuthResponse?> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
+        public async Task<Result<AuthResponse?>> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
         {
             // Validate the refresh token and get the user associated with it
             var userId = _jwtProvider.ValidateToken(token);
             if (userId is null)
             {
-                return null;
+                return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials)!;
             }
             // Get the user from the database
             var user = _userManager
@@ -65,7 +70,7 @@ namespace SurveyBasket.Api.Services
 
             if (user is null)
             {
-                return null;
+                return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials)!;
             }
 
             // Check if the refresh token is valid and active and get the refresh token from the database
@@ -73,7 +78,7 @@ namespace SurveyBasket.Api.Services
 
             if (userRefreshToken is null)
             {
-                return null;
+                return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials)!;
             }
 
             // Revoke the old refresh token
@@ -102,21 +107,21 @@ namespace SurveyBasket.Api.Services
 
 
             // return auth response with token and user info
-            return new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName, newToken, expiresIn, newRefreshToken, refreshTokenExpiration);
-
+            var response = new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName, newToken, expiresIn, newRefreshToken, refreshTokenExpiration);
+            return Result.Success(response)!;
         }
 
 
 
         // Revoke the refresh token and return true if successful, otherwise return false
-        public async Task<bool> RevokeRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
+        public async Task<Result> RevokeRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
         {
 
             // Validate the refresh token and get the user associated with it
             var userId = _jwtProvider.ValidateToken(token);
             if (userId is null)
             {
-                return false;
+                return Result.Failure(UserErrors.InvalidCredentials);
             }
             // Get the user from the database
             var user = _userManager
@@ -124,7 +129,7 @@ namespace SurveyBasket.Api.Services
 
             if (user is null)
             {
-                return false;
+                return Result.Failure(UserErrors.InvalidCredentials);
             }
 
             // Check if the refresh token is valid and active and get the refresh token from the database
@@ -132,7 +137,7 @@ namespace SurveyBasket.Api.Services
 
             if (userRefreshToken is null)
             {
-                return false;
+                return Result.Failure(UserErrors.InvalidCredentials);
             }
 
             // Revoke the old refresh token
@@ -141,7 +146,7 @@ namespace SurveyBasket.Api.Services
             // Update the user with the new refresh token
             await _userManager.UpdateAsync(user);
 
-            return true;
+            return Result.Success();
 
 
         }

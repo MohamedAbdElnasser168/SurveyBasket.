@@ -78,7 +78,7 @@ namespace SurveyBasket.Api.Services
 
             if (userRefreshToken is null)
             {
-                return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials)!;
+                return Result.Failure<AuthResponse>(UserErrors.InvalidRefreshTokens)!;
             }
 
             // Revoke the old refresh token
@@ -121,7 +121,7 @@ namespace SurveyBasket.Api.Services
             var userId = _jwtProvider.ValidateToken(token);
             if (userId is null)
             {
-                return Result.Failure(UserErrors.InvalidCredentials);
+                return Result.Failure(UserErrors.InvalidRefreshTokens);
             }
             // Get the user from the database
             var user = _userManager
@@ -137,7 +137,7 @@ namespace SurveyBasket.Api.Services
 
             if (userRefreshToken is null)
             {
-                return Result.Failure(UserErrors.InvalidCredentials);
+                return Result.Failure(UserErrors.InvalidRefreshTokens);
             }
 
             // Revoke the old refresh token

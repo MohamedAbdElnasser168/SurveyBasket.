@@ -12,17 +12,34 @@ namespace SurveyBasket.Api.Persistence
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
         public DbSet<Poll> Polls { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Answer> Answers { get; set; }
+        public DbSet<Vote> Votes { get; set; }
+        public DbSet<VoteAnswer> VoteAnswers { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region Configrations
             //modelBuilder.Entity<Poll>()
             //    .Property(p => p.Title)
             //    .HasMaxLength(50);
-
-
             //modelBuilder.ApplyConfiguration(new PollConfiguration());
+
+            #endregion
+
+            var cascadeFKs= modelBuilder.Model
+                .GetEntityTypes()
+                .SelectMany(t => t.GetForeignKeys())
+                .Where(fk => fk.DeleteBehavior == DeleteBehavior.Cascade && !fk.IsOwnership);
+
+            foreach (var fk in cascadeFKs)
+                fk.DeleteBehavior = DeleteBehavior.Restrict;
+            
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
+        
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -30,7 +47,7 @@ namespace SurveyBasket.Api.Persistence
             var entries = ChangeTracker.Entries<AuditableEntity>();
             foreach (var entityEntry in entries)
             {
-                var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                var currentUserId = _httpContextAccessor.HttpContext?.User?.GetUserId()!;
                 if (entityEntry.State == EntityState.Added)
                 {
                     entityEntry.Property(x => x.CreatedById).CurrentValue = currentUserId; // Replace with actual user ID

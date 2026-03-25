@@ -72,7 +72,9 @@ namespace SurveyBasket.Api
             // Add services to the container.
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
-
+            services.AddScoped<IQuestionService,QuestionService>();
+            services.AddScoped<IVoteService, VoteService>();
+            services.AddScoped<IResultService, ResultService>();
 
             // Add global exception handler
             services.AddExceptionHandler<GlobalExceptionHandler>();

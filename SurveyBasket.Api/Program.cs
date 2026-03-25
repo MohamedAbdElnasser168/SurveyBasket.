@@ -6,8 +6,10 @@ using SurveyBasket.Api.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddConsole();
 
 builder.Services.AddDependencies(builder.Configuration);
+
 // Identity API Endpoints registration
 //builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
 //    .AddEntityFrameworkStores<ApplicationDbContext>();

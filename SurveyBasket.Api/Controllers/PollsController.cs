@@ -20,16 +20,14 @@ namespace SurveyBasket.Api.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
-            var result = await _pollService.GetAllAsync(cancellationToken); 
-            // adapt the list of polls to a list of PollResponse objects using Mapster
-            //var response = polls.Adapt<List<PollResponse>>();
-
-            return result.IsSuccess
-                ? Ok(result.Value)
-                : result.ToProblem(StatusCodes.Status404NotFound);
-
+            return Ok(await _pollService.GetAllAsync(cancellationToken));  
         }
 
+        [HttpGet("current")]
+        public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken = default)
+        {   
+            return Ok(await _pollService.GetCurrentAsync(cancellationToken));
+        }
 
 
         //mapped id from route to method parameter
@@ -42,7 +40,7 @@ namespace SurveyBasket.Api.Controllers
 
             return result.IsSuccess
                 ? Ok(result.Value)
-                : result.ToProblem(StatusCodes.Status404NotFound);
+                : result.ToProblem();
 
         }
 
@@ -72,7 +70,7 @@ namespace SurveyBasket.Api.Controllers
             var result = await _pollService.AddAsync(request, cancellationToken);
             return result.IsSuccess
                ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
-               : result.ToProblem(StatusCodes.Status404NotFound);
+               : result.ToProblem();
 
 
         }
@@ -89,7 +87,7 @@ namespace SurveyBasket.Api.Controllers
             return result.IsSuccess
                  ? NoContent()
                  // 409 Conflict if the poll with the specified id  has  conflict with existing data (e.g., duplicate title)
-                 : result.ToProblem(StatusCodes.Status409Conflict);
+                 : result.ToProblem();
 
         }
 
@@ -103,7 +101,7 @@ namespace SurveyBasket.Api.Controllers
             return result.IsSuccess
                ? NoContent()
                // 404 Not Found if the poll with the specified id does not exist
-               : result.ToProblem(StatusCodes.Status404NotFound);
+               : result.ToProblem();
 
         }
 
@@ -115,7 +113,7 @@ namespace SurveyBasket.Api.Controllers
             var result = await _pollService.TogglePublishStatusAsync(id, cancellationtoken);
             return result.IsSuccess
                ? NoContent()
-               : result.ToProblem(StatusCodes.Status404NotFound);
+               : result.ToProblem();
 
         }
 

@@ -23,11 +23,11 @@ namespace SurveyBasket.Api.Controllers
             // testing my GlobalExceptionHandler class by throwing an exception when test the endpoint"
             //throw new Exception("My Exception");
 
-            var authResult = await _authService.GetTokenAsync(request.Email,request.Password, cancellationToken);
+            var result = await _authService.GetTokenAsync(request.Email,request.Password, cancellationToken);
             // authResult is a Result<AuthResponse> object that contains the authentication result of the login operation.
-            return authResult.IsSuccess
-                 ? Ok(authResult.Value)
-                 : authResult.ToProblem(StatusCodes.Status404NotFound);
+            return result.IsSuccess
+                 ? Ok(result.Value)
+                 : result.ToProblem();
         }
 
 
@@ -36,10 +36,10 @@ namespace SurveyBasket.Api.Controllers
         public async Task<IActionResult> RefreshAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken = default)
         {
 
-            var authResult = await _authService.GetRefreshTokenAsync(request.Token,request.RefreshToken);
-            return authResult.IsSuccess
-                 ? Ok(authResult.Value)
-                 :authResult.ToProblem(StatusCodes.Status404NotFound);
+            var result = await _authService.GetRefreshTokenAsync(request.Token,request.RefreshToken);
+            return result.IsSuccess
+                 ? Ok(result.Value)
+                 :result.ToProblem();
         }
 
 
@@ -47,10 +47,10 @@ namespace SurveyBasket.Api.Controllers
         [HttpPut("revoke-refresh-token")]
         public async Task<IActionResult> RevokeAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken = default)
         {
-            var isRevoked = await _authService.RevokeRefreshTokenAsync(request.Token, request.RefreshToken);
-            return isRevoked.IsSuccess
+            var result = await _authService.RevokeRefreshTokenAsync(request.Token, request.RefreshToken);
+            return result.IsSuccess
                    ? Ok()
-                   : isRevoked.ToProblem(StatusCodes.Status404NotFound);
+                   : result.ToProblem();
         }
     }
 }

@@ -1,14 +1,16 @@
 ﻿
+using SurveyBasket.Api.Contracts.Questions;
+
 namespace SurveyBasket.Api.Mapping
 {
     public class MappingConfigurations : IRegister
     {
         public void Register(TypeAdapterConfig config)
         {
-                             //src  //dest         
-            // config.NewConfig<Poll, PollResponse>()
-            //.Map(dest => dest.Notes, src => src.Description);
-
+            config.NewConfig<QuestionRequest, Question>()
+                // Map the Answers property by projecting each string answer into an Answer entity
+                .Map(dest => dest.Answers, src => src.Answers.Select(answer => new Answer { Content = answer }));
+            //.Ignore(nameof(Question.Answers));
         }
     }
 }

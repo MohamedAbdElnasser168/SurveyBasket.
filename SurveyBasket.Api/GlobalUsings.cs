@@ -15,6 +15,7 @@ global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using SurveyBasket.Api;
 global using Microsoft.EntityFrameworkCore;
 global using SurveyBasket.Api.Persistence;
+global using SurveyBasket.Api.Extensions;
 
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.AspNetCore.Identity;
@@ -22,3 +23,4 @@ global using SurveyBasket.Api.Authentication;
 global using SurveyBasket.Api.Persistence;
 global using SurveyBasket.Api.Abstractions;
 global using SurveyBasket.Api.Errors;
+global using Microsoft.AspNetCore.Authorization;

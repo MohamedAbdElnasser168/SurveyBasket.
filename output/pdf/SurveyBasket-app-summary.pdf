@@ -1,0 +1,69 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [3 0 R] >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 3787 >>
+stream
+BT /F2 20 Tf 54 808 Td (SurveyBasket App Summary) Tj ET
+BT /F1 9 Tf 54 786 Td (Evidence source: SurveyBasket.Api repo contents) Tj ET
+BT /F2 12 Tf 54 758 Td (What It Is) Tj ET
+BT /F1 9 Tf 54 742 Td (SurveyBasket is an ASP.NET Core Web API for creating polls, managing questions, collecting votes, and returning results data.) Tj ET
+BT /F1 9 Tf 54 730 Td (The repo shows JWT-based authentication, SQL Server persistence via EF Core, and OpenAPI/Swagger support in development.) Tj ET
+BT /F2 12 Tf 54 706 Td (Who It's For) Tj ET
+BT /F1 9 Tf 54 690 Td (Primary persona: Not found in repo.) Tj ET
+BT /F1 9 Tf 54 678 Td (Based on controllers and services, the API appears intended for an authenticated client app used by poll managers and poll participants.) Tj ET
+BT /F2 12 Tf 54 654 Td (What It Does) Tj ET
+BT /F1 9 Tf 54 638 Td (- Auth endpoints issue JWTs, refresh tokens, and support refresh-token revocation.) Tj ET
+BT /F1 9 Tf 54 626 Td (- Poll endpoints create, read, update, delete, list current polls, and toggle publish status.) Tj ET
+BT /F1 9 Tf 54 614 Td (- Question endpoints manage poll-scoped questions and toggle question active status.) Tj ET
+BT /F1 9 Tf 54 602 Td (- Voting endpoints return available questions for a user and accept submitted answers.) Tj ET
+BT /F1 9 Tf 54 590 Td (- Results endpoints return raw vote data, votes per day, and votes per question.) Tj ET
+BT /F1 9 Tf 54 578 Td (- FluentValidation validators and a global exception handler shape request validation and errors.) Tj ET
+BT /F1 9 Tf 54 566 Td (- Development mode exposes OpenAPI plus Swagger UI for exploring the API.) Tj ET
+BT /F2 12 Tf 54 542 Td (How It Works) Tj ET
+BT /F1 9 Tf 54 526 Td (- Host: Program.cs builds the ASP.NET Core app, enables CORS, controllers, HTTPS, authz, and dev OpenAPI/Swagger.) Tj ET
+BT /F1 9 Tf 54 514 Td (- API layer: Controllers include Auth, Polls, Questions, Votes, and Results.) Tj ET
+BT /F1 9 Tf 54 502 Td (- Business layer: Scoped services such as AuthService, PollService, QuestionService, VoteService, and ResultService handle use cases.) Tj ET
+BT /F1 9 Tf 54 490 Td (- Data layer: ApplicationDbContext uses EF Core with SQL Server and IdentityDbContext<ApplicationUser>.) Tj ET
+BT /F1 9 Tf 54 478 Td (- Security flow: AuthService uses UserManager<ApplicationUser> and JwtProvider to validate users, mint JWTs, and store refresh tokens.) Tj ET
+BT /F1 9 Tf 54 466 Td (- Mapping/validation: Mapster maps entities/contracts; FluentValidation auto-validates request models.) Tj ET
+BT /F1 9 Tf 54 454 Td (- Data flow: HTTP request -> controller -> service -> EF Core/Identity -> SQL Server -> mapped response or ProblemDetails error.) Tj ET
+BT /F2 12 Tf 54 430 Td (How To Run) Tj ET
+BT /F1 9 Tf 54 414 Td (1. Use a .NET SDK that supports target framework net10.0. Exact SDK version: Not found in repo.) Tj ET
+BT /F1 9 Tf 54 402 Td (2. Ensure SQL Server is available and update DefaultConnection in SurveyBasket.Api/appsettings.json if needed.) Tj ET
+BT /F1 9 Tf 54 390 Td (3. Set Jwt:Key before startup; the checked-in appsettings.json leaves it empty.) Tj ET
+BT /F1 9 Tf 54 378 Td (4. Apply the EF Core migrations to create/update the database. Exact command: Not found in repo.) Tj ET
+BT /F1 9 Tf 54 366 Td (5. Run: dotnet run --project SurveyBasket.Api) Tj ET
+BT /F1 9 Tf 54 354 Td (6. In development, open https://localhost:7099/swagger/index.html or use http://localhost:5033.) Tj ET
+BT /F1 8 Tf 54 326 Td (Key evidence: Program.cs, DependencyInjection.cs, appsettings.json, launchSettings.json, controllers, services, ApplicationDbContext, and EF migrations.) Tj ET
+BT /F1 8 Tf 54 314 Td (Rendering note: generated in this environment without reportlab/poppler, so image-based visual verification was not available.) Tj ET
+
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+4235
+%%EOF

@@ -29,6 +29,7 @@ namespace SurveyBasket.Api.Controllers
                 : result.ToProblem();
         }
 
+
         [HttpGet("data-PerQuestion")]
         public async Task<IActionResult> PollVotesPerQuestion([FromRoute] int pollId, CancellationToken cancellationToken)
         {

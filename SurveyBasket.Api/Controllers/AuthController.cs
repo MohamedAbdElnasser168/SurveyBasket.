@@ -7,12 +7,11 @@ namespace SurveyBasket.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class AuthController(IAuthService authService,IOptions<JwtOptions> Jwtoptions) : ControllerBase
+    public class AuthController(IAuthService authService,ILogger<AuthController> logger) : ControllerBase
     {
-        //                                             .value
-        private readonly JwtOptions _jwtOptions = Jwtoptions.Value;
+        
         private readonly IAuthService _authService = authService;
-
+        private readonly ILogger<AuthController> _logger = logger;
 
         // Login using email and password to get jwt token and refresh token
 
@@ -22,6 +21,10 @@ namespace SurveyBasket.Api.Controllers
             // For testing purpose only, to test global exception handling middleware
             // testing my GlobalExceptionHandler class by throwing an exception when test the endpoint"
             //throw new Exception("My Exception");
+
+            // Log the login attempt with the email address
+            _logger.LogInformation("Login attempt for email: {email} and password:{password} ", request.Email,request.Password);
+
 
             var result = await _authService.GetTokenAsync(request.Email,request.Password, cancellationToken);
             // authResult is a Result<AuthResponse> object that contains the authentication result of the login operation.

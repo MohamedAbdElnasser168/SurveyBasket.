@@ -5,6 +5,8 @@ namespace SurveyBasket.Api.Services
     public class ResultService(ApplicationDbContext context) : IResultService
     {
         private readonly ApplicationDbContext _contex = context;
+
+        // get all votes for a poll, including the voter name, vote date, and selected answers
         public async Task<Result<PollVotesResponse>> GetPollVotesAsync(int pollId, CancellationToken cancellationToken = default)
         {
             // Check if the poll exists
@@ -37,6 +39,8 @@ namespace SurveyBasket.Api.Services
 
         }
 
+
+        // get the number of votes per day for a poll 
         public async Task<Result<IEnumerable<VotesPerDayResponse>>> GetVotesPerDayAsync(int pollId, CancellationToken cancellationToken = default)
         {
             // Check if the poll exists
@@ -62,6 +66,8 @@ namespace SurveyBasket.Api.Services
 
         }
 
+
+        // 
         public async Task<Result<IEnumerable<VotesPerQuestionResponse>>> GetVotesPerQuestionAsync(int pollId, CancellationToken cancellationToken = default)
         {
             // Check if the poll exists

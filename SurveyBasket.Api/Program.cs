@@ -1,14 +1,16 @@
 
 
 
-using Microsoft.Extensions.Configuration;
-using SurveyBasket.Api.Persistence;
-
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.AddConsole();
+//builder.Logging.AddConsole();
 
 builder.Services.AddDependencies(builder.Configuration);
+builder.Host.UseSerilog((context, configuration) =>
+
+    // Read Serilog configuration from appsettings.json
+    configuration.ReadFrom.Configuration(context.Configuration)
+);
 
 // Identity API Endpoints registration
 //builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
@@ -17,12 +19,13 @@ builder.Services.AddDependencies(builder.Configuration);
 var app = builder.Build();
 
 #region Pipeline
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwaggerUI(options=>options.SwaggerEndpoint("/openapi/v1.json","v1"));
 }
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 

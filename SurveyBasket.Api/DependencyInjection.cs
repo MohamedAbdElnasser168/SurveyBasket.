@@ -10,8 +10,18 @@ namespace SurveyBasket.Api
         {
             services.AddControllers();
 
+
+            // Cache configuration
+
+            services.AddHybridCache();
+
+
+
+
+
+
             // Read allowed origins from configuration
-            //var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
+            // var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
 
             // CORS configuration
 

@@ -3,6 +3,14 @@
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// we will use hybrid cache strategy, we will use in-memory cache for the most frequently accessed data
+// and distributed cache for the less frequently accessed data, and we will use Redis as a distributed cache provider
+// we will install Microsoft.Extensions.Caching.Hybrid package to
+// use the hybrid cache strategy and we will configure it in the startup class
+
+
+
 //builder.Logging.AddConsole();
 
 builder.Services.AddDependencies(builder.Configuration);

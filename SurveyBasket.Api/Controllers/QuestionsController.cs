@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Api.Contracts.Polls;
+﻿using Microsoft.AspNetCore.OutputCaching;
+using SurveyBasket.Api.Contracts.Polls;
 using SurveyBasket.Api.Contracts.Questions;
 
 namespace SurveyBasket.Api.Controllers
@@ -16,6 +17,19 @@ namespace SurveyBasket.Api.Controllers
 
 
         [HttpGet]
+        // cache the response for 60 seconds to improve performance and reduce the load on the server
+        // ResponseCashe works only with endpoints that returns 200 status code and it will cache the response for 60 seconds 
+        // client controls the cache and it will be stored in the client cache and it will be sent to the server with the request and the server will check if the cache is still valid and if it is valid it will return the cached response otherwise it will return a new response and update the cache in the client
+        //[ResponseCache(Duration =60)]
+
+        // //////////////////////////////
+
+        //// OutputCache works with all status codes and it will cache the response for 60 seconds and
+        ///it will be stored in the server cache and it will be sent to the client with the response and 
+        ///the client will store it in the client cache and it will be sent to the server with the request and
+        ///the server will check if the cache is still valid and if it is valid it will return
+        ///the cached response otherwise it will return a new response and update the cache in the server
+        //[OutputCache(Duration =60)]
         public async Task<IActionResult> GetAll([FromRoute] int pollId, CancellationToken cancellationToken)
         {
             var result = await _questionService.GetAllAsync(pollId, cancellationToken);

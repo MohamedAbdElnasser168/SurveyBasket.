@@ -1,5 +1,8 @@
 ﻿
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
+using SurveyBasket.Api.Settings;
 using System.Text;
 
 namespace SurveyBasket.Api
@@ -74,6 +77,11 @@ namespace SurveyBasket.Api
             services.AddFluentValidation();
 
 
+            // read mail settings from configuration and register it in the container
+            // for options pattern
+            services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
+
+
             return services;
         }
 
@@ -85,10 +93,13 @@ namespace SurveyBasket.Api
             services.AddScoped<IQuestionService,QuestionService>();
             services.AddScoped<IVoteService, VoteService>();
             services.AddScoped<IResultService, ResultService>();
+            services.AddScoped<IEmailSender, EmailService>();
 
             // Add global exception handler
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
+
+            services.AddHttpContextAccessor();
 
 
             return services;
@@ -154,6 +165,18 @@ namespace SurveyBasket.Api
 
                     };
                 });
+
+
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Default Password settings.
+                options.Password.RequiredLength = 6;
+                options.SignIn.RequireConfirmedEmail = true;
+                options.User.RequireUniqueEmail = true;
+            });
+
+
 
             //var test = new
             //{

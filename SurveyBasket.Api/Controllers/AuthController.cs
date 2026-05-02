@@ -55,5 +55,45 @@ namespace SurveyBasket.Api.Controllers
                    ? Ok()
                    : result.ToProblem();
         }
+
+
+        [HttpPost("register")]
+        public async Task<IActionResult> register([FromBody] RegisterRequest request, CancellationToken cancellationToken = default)
+        {
+            // For testing purpose only, to test global exception handling middleware
+            // testing my GlobalExceptionHandler class by throwing an exception when test the endpoint"
+            //throw new Exception("My Exception");
+
+            // Log the login attempt with the email address
+            _logger.LogInformation("Register attempt for email: {email} and password:{password} ", request.Email, request.Password);
+
+
+            var result = await _authService.RegisterAsync(request, cancellationToken);
+            // authResult is a Result<AuthResponse> object that contains the authentication result of the login operation.
+            return result.IsSuccess
+                 ? Ok()
+                 : result.ToProblem();
+        }
+
+
+
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request, CancellationToken cancellationToken = default)
+        {
+            var result = await _authService.ConfirmEmailAsync(request, cancellationToken);
+            return result.IsSuccess
+                   ? Ok()
+                   : result.ToProblem();
+        }
+
+        [HttpPost("resend-confirmation-email")]
+        public async Task<IActionResult> ResendConfirmationEmail([FromBody] ResendConfirmationEmailRequest request, CancellationToken cancellationToken = default)
+        {
+            var result = await _authService.ResendConfirmationEmailAsync(request, cancellationToken);
+            return result.IsSuccess
+                   ? Ok()
+                   : result.ToProblem();
+        }
+
     }
 }

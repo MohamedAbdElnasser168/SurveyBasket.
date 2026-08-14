@@ -39,7 +39,6 @@ namespace SurveyBasket.Api.Controllers
         }
 
 
-
         [HttpGet("{questionId}")]
         public IActionResult Get([FromRoute] int pollId, [FromRoute] int questionId)
         {
@@ -51,7 +50,6 @@ namespace SurveyBasket.Api.Controllers
         }
 
 
-
         [HttpPost("")]
         public async Task<IActionResult> Add([FromRoute] int pollId, [FromBody] QuestionRequest request, CancellationToken cancellationToken)
         {
@@ -61,10 +59,7 @@ namespace SurveyBasket.Api.Controllers
                 ? CreatedAtAction(nameof(Get), new { pollId, id = result.Value.Id }, result.Value)
                 : result.ToProblem();
 
-            
         }
-
-
 
         // route will be api/poll/{pollId}/questions/{id}
 
@@ -78,8 +73,6 @@ namespace SurveyBasket.Api.Controllers
                  : result.ToProblem();
            
         }
-
-
 
 
         [HttpPut("{questionId}/ToggeleStatus")]

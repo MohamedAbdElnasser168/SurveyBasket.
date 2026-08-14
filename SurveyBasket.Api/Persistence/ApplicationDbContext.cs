@@ -6,8 +6,10 @@ using System.Security.Claims;
 namespace SurveyBasket.Api.Persistence
 {
     // Prime Constractors feature used here (C# 9.0 and later)
+    // u should here the application for Identity user and ause ApplicationRole for the role,
+    // and use string as the primary key type for both user and role (u can modify the type of the primary key)
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IHttpContextAccessor httpContextAccessor)
-        : IdentityDbContext<ApplicationUser>(options)
+        : IdentityDbContext<ApplicationUser, ApplicationRole,string>(options)
     {
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 

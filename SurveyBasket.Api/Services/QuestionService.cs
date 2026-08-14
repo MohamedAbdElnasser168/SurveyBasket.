@@ -56,7 +56,13 @@ namespace SurveyBasket.Api.Services
                 return Result.Failure<IEnumerable<QuestionResponse>>(VoteErrors.DuplicatedVote);
 
             // second we need to check if the poll exists or not
-            var pollIsExists = await _context.Polls.AnyAsync(p => p.Id == pollId && p.IsPublished && p.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && p.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow), cancellationToken: cancellationToken);
+            
+            var pollIsExists = await _context.Polls.AnyAsync(p => p.Id == pollId 
+            && p.IsPublished 
+            && p.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) 
+            && p.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow)
+            , cancellationToken: cancellationToken);
+            
             if (!pollIsExists)
                 return Result.Failure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);
 

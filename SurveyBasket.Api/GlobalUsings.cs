@@ -28,3 +28,8 @@ global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.Extensions.Configuration;
 global using Serilog;
 
+global using Microsoft.Extensions.DependencyInjection;
+global using Hangfire;
+global using Hangfire.SqlServer;
+global using SurveyBasket.Api.Abstractions.Consts;
+global using Microsoft.Extensions.Options;

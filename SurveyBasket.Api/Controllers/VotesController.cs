@@ -6,7 +6,8 @@ namespace SurveyBasket.Api.Controllers
 {
     [Route("api/polls/{pollId}/vote")]
     [ApiController]
-    [Authorize]
+    // role based authorization for the votes controller, only members can access it
+    [Authorize(Roles = DefaultRoles.Member)]
 
     public class VotesController(IQuestionService questionService,IVoteService voteService) : ControllerBase
     {

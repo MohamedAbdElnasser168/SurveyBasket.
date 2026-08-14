@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace SurveyBasket.Api.Authentication
 {
@@ -11,7 +12,7 @@ namespace SurveyBasket.Api.Authentication
     {
         private readonly JwtOptions _options = options.Value;
         
-        public (string token, int expiresIn) GenerateToken(ApplicationUser user)
+        public (string token, int expiresIn) GenerateToken(ApplicationUser user,IEnumerable<string> roles,IEnumerable<string> permissions)
         {
             
                         
@@ -21,7 +22,9 @@ namespace SurveyBasket.Api.Authentication
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(nameof(roles), JsonSerializer.Serialize(roles),JsonClaimValueTypes.JsonArray),//string.Join(",", roles)
+                new Claim(nameof(permissions), JsonSerializer.Serialize(permissions),JsonClaimValueTypes.JsonArray)
             ];
 
             // Here you would typically use a signing key and specify token expiration

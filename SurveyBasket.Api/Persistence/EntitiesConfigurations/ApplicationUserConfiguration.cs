@@ -1,4 +1,5 @@
 ﻿
+
 namespace SurveyBasket.Api.Persistence.EntitiesConfigurations
 {
     // كل ده عشان استخدم الفلاونت ابي اي مع كل انتيتي لوحدها عشان الكود ميكبرش في ال DbContext
@@ -19,6 +20,26 @@ namespace SurveyBasket.Api.Persistence.EntitiesConfigurations
 
             builder.Property(u => u.LastName)
                 .HasMaxLength(100);
+
+
+            // Default Data ( Seeding )
+
+            var passwordHasher = new PasswordHasher<ApplicationUser>();
+
+            builder.HasData(new ApplicationUser 
+            {
+                Id = DefaultUsers.AdminId,
+                FirstName = "SurveyBasket",
+                LastName = "Admin",
+                UserName = DefaultUsers.AdminEmail,
+                NormalizedUserName = DefaultUsers.AdminEmail.ToUpper(),
+                Email = DefaultUsers.AdminEmail,
+                NormalizedEmail = DefaultUsers.AdminEmail.ToUpper(),
+                SecurityStamp = DefaultUsers.AdminSecurityStamp,
+                ConcurrencyStamp = DefaultUsers.AdminConcurrencyStamp,
+                EmailConfirmed = true,
+                PasswordHash = "AQAAAAIAAYagAAAAEEYKHTCzKJC5Y4WXB/aalWsUrl5EPNzURlCk78PfvJ0nzGRgQqyquUj8qT8jDCYcnQ=="
+            });
                 
         }
     }

@@ -1,7 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SurveyBasket.Api.Authentication.FIlters;
 using SurveyBasket.Api.Settings;
 using System.Text;
 
@@ -75,6 +77,9 @@ namespace SurveyBasket.Api
             services.AddMappsterConf();
             services.AddOpenApi();
             services.AddFluentValidation();
+            services.AddBackgroundJobsConfig(configuration);
+            services.AddHttpContextAccessor();
+
 
 
             // read mail settings from configuration and register it in the container
@@ -90,16 +95,19 @@ namespace SurveyBasket.Api
             // Add services to the container.
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IQuestionService,QuestionService>();
             services.AddScoped<IVoteService, VoteService>();
             services.AddScoped<IResultService, ResultService>();
             services.AddScoped<IEmailSender, EmailService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
 
             // Add global exception handler
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
 
-            services.AddHttpContextAccessor();
+            
 
 
             return services;
@@ -126,10 +134,13 @@ namespace SurveyBasket.Api
         public static IServiceCollection AddAuthConfig(this IServiceCollection services,IConfiguration configuration)
         {
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+
+            services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
 
             services.AddSingleton<IJwtProvider, JwtProvider>();
 
@@ -174,6 +185,8 @@ namespace SurveyBasket.Api
                 options.Password.RequiredLength = 6;
                 options.SignIn.RequireConfirmedEmail = true;
                 options.User.RequireUniqueEmail = true;
+
+                // Lockout settings.
             });
 
 
@@ -184,6 +197,19 @@ namespace SurveyBasket.Api
             //    ValidIssuer = configuration["Jwt:Issuer"],
             //    ValidAudience = configuration["Jwt:Audience"]
             //};
+
+            return services;
+        }
+
+        private static IServiceCollection AddBackgroundJobsConfig(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHangfire(config => config
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection")));
+
+            services.AddHangfireServer();
 
             return services;
         }

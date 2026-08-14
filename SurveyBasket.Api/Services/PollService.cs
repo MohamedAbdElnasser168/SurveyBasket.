@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 
 namespace SurveyBasket.Api.Services
 {
-    public class PollService(ApplicationDbContext context ) : IPollService
+    public class PollService
+        (ApplicationDbContext context,
+        INotificationService notificationService ) : IPollService
     {
         private readonly ApplicationDbContext _context = context;
+        private readonly INotificationService _notificationService = notificationService;
 
-        public async Task<IEnumerable<PollResponse>> GetAllAsync(CancellationToken cancellationToken = default)=>
+        public async Task<IEnumerable<PollResponse>> GetAllAsync(CancellationToken cancellationToken = default) =>
               await _context.Polls
                 .AsNoTracking()
                 .ProjectToType<PollResponse>()
                 .ToListAsync(cancellationToken);
-
-
-
 
         public async Task<IEnumerable<PollResponse>> GetCurrentAsync(CancellationToken cancellationToken = default) =>
             await _context.Polls
@@ -25,10 +25,6 @@ namespace SurveyBasket.Api.Services
                 .ProjectToType<PollResponse>()
                 .ToListAsync(cancellationToken);
         
-
-
-
-
         public async Task<Result<PollResponse>> GetPollByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var poll = await _context.Polls.FindAsync(id, cancellationToken);
@@ -38,9 +34,6 @@ namespace SurveyBasket.Api.Services
             }
             return Result.Success(poll.Adapt<PollResponse>());
         }
-
-
-
 
        // function to add a poll and return the added poll added poll should be returned as PollResponse
         public async Task<Result<PollResponse>> AddAsync(PollRequest pollRequest, CancellationToken cancellationToken = default)
@@ -54,7 +47,6 @@ namespace SurveyBasket.Api.Services
             await _context.SaveChangesAsync(cancellationToken);
 
             return Result.Success(poll.Adapt<PollResponse>());
-
 
         }
 
@@ -83,7 +75,6 @@ namespace SurveyBasket.Api.Services
             return Result.Success();
         }
 
-
         public async Task<Result> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
             var poll = await _context.Polls.FindAsync(id, cancellationToken);
@@ -108,6 +99,10 @@ namespace SurveyBasket.Api.Services
 
             poll.IsPublished = !poll.IsPublished;
             await _context.SaveChangesAsync(cancellationToken);
+
+            // if the poll is published and the start date is today, send a notification to all users
+            if (poll.IsPublished && poll.StartsAt == DateOnly.FromDateTime(DateTime.UtcNow))
+                BackgroundJob.Enqueue(() => _notificationService.SendNewPollNotification(poll.Id));
 
             return Result.Success();
         }

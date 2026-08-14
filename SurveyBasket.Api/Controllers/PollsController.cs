@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using SurveyBasket.Api.Authentication.FIlters;
 using SurveyBasket.Api.Contracts.Polls;
 
 namespace SurveyBasket.Api.Controllers
@@ -6,7 +7,7 @@ namespace SurveyBasket.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+
     public class PollsController(IPollService pollService) : ControllerBase
     {
 
@@ -16,13 +17,16 @@ namespace SurveyBasket.Api.Controllers
 
 
         // Get All Polls
-
+        // permission based authorization for the get all polls endpoint, only users with the GetPolls permission can access it
+        [HasPermission(Permissions.GetPolls)]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
             return Ok(await _pollService.GetAllAsync(cancellationToken));  
         }
 
+        // role based authorization for the current poll endpoint, only members can access it
+        [Authorize(Roles = DefaultRoles.Member)]
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken = default)
         {   
@@ -108,7 +112,7 @@ namespace SurveyBasket.Api.Controllers
 
 
         [HttpPut("{id}/togglepublish")]
-        public async Task<IActionResult> togglepublish(int id, CancellationToken cancellationtoken = default)
+        public async Task<IActionResult> Togglepublish(int id, CancellationToken cancellationtoken = default)
         {
             var result = await _pollService.TogglePublishStatusAsync(id, cancellationtoken);
             return result.IsSuccess

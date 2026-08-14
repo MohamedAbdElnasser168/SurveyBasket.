@@ -23,6 +23,15 @@
         public static readonly Error DublicatedConfirmation =
             new("User.DublicatedConfirmation", " Email already confirmed", StatusCodes.Status400BadRequest);
 
+        public static readonly Error DisabledUser =
+            new("User.DisabledUser", "User is disabled", StatusCodes.Status401Unauthorized);
+
+        public static readonly Error LockedUser =
+            new("User.LockedUser", "User is locked", StatusCodes.Status401Unauthorized);
+
+        public static readonly Error UserNotFound =
+            new("User.UserNotFound", "User not found", StatusCodes.Status404NotFound);
+
 
     }
 
